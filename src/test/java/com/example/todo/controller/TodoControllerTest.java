@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -112,5 +113,52 @@ public class TodoControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser
+    void updateTodo_withInvalidBody_shouldReturn400WithFieldErrors() throws Exception {
+        // GIVEN — title vide viole @NotBlank sur TodoRequest (MOU-28)
+        TodoRequest request = new TodoRequest();
+        request.setTitle("");
+        request.setPriority(2);
+
+        // WHEN + THEN
+        mockMvc.perform(put("/api/todos/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors.title").exists());
+    }
+
+    @Test
+    @WithMockUser
+    void updateTodo_whenNotFound_shouldReturn404() throws Exception {
+        // GIVEN (MOU-29)
+        TodoRequest request = new TodoRequest();
+        request.setTitle("Existe pas");
+        request.setPriority(2);
+        given(todoService.updateTodo(eq(9999L), any(TodoRequest.class)))
+                .willThrow(new ResourceNotFoundException("Todo", 9999L));
+
+        // WHEN + THEN
+        mockMvc.perform(put("/api/todos/9999")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void deleteTodo_whenNotFound_shouldReturn404() throws Exception {
+        // GIVEN (MOU-29)
+        willThrow(new ResourceNotFoundException("Todo", 9999L))
+                .given(todoService).deleteTodo(9999L);
+
+        // WHEN + THEN
+        mockMvc.perform(delete("/api/todos/9999").with(csrf()))
+                .andExpect(status().isNotFound());
     }
 }
