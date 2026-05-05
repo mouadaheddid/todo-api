@@ -1,6 +1,7 @@
 package com.example.todo.controller;
 
 import com.example.todo.dto.TodoResponse;
+import com.example.todo.exception.ResourceNotFoundException;
 import com.example.todo.service.TodoService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ public class TodoControllerTest {
     void getTodoById_whenNotFound_shouldReturn404() throws Exception {
         // GIVEN
         given(todoService.getTodoById(99L))
-                .willThrow(new RuntimeException("Not found"));
+                .willThrow(new ResourceNotFoundException("Todo", 99L));
 
         // WHEN + THEN
         mockMvc.perform(get("/api/todos/99"))
