@@ -54,7 +54,7 @@ public class TodoService {
     public TodoResponse updateTodo(Long id, TodoRequest request) {
         // D'abord vérifier que le todo existe
         Todo existing = todoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Todo not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Todo", id));
 
         // Mettre à jour les champs (on ne touche pas à id ni createdAt)
         existing.setTitle(request.getTitle());
@@ -70,7 +70,7 @@ public class TodoService {
     public void deleteTodo(Long id) {
         // Vérifier l'existence avant de supprimer
         if (!todoRepository.existsById(id)) {
-            throw new RuntimeException("Todo not found with id: " + id);
+            throw new ResourceNotFoundException("Todo", id);
         }
         todoRepository.deleteById(id);
     }

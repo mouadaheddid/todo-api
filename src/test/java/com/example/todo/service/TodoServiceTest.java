@@ -74,6 +74,26 @@ public class TodoServiceTest {
         // THEN
         assertThat(result.getPriority()).isEqualTo(1);
     }
+
+    @Test
+    void updateTodo_whenNotFound_shouldThrowResourceNotFound() {
+        // GIVEN
+        given(todoRepository.findById(99L)).willReturn(Optional.empty());
+
+        // WHEN / THEN
+        assertThatThrownBy(() -> todoService.updateTodo(99L, new TodoRequest()))
+                .isInstanceOf(ResourceNotFoundException.class);
+    }
+
+    @Test
+    void deleteTodo_whenNotFound_shouldThrowResourceNotFound() {
+        // GIVEN
+        given(todoRepository.existsById(99L)).willReturn(false);
+
+        // WHEN / THEN
+        assertThatThrownBy(() -> todoService.deleteTodo(99L))
+                .isInstanceOf(ResourceNotFoundException.class);
+    }
 }
 
 
