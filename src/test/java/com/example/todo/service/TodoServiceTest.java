@@ -1,5 +1,6 @@
 package com.example.todo.service;
 
+import com.example.todo.dto.TodoRequest;
 import com.example.todo.dto.TodoResponse;
 import com.example.todo.entity.Todo;
 import com.example.todo.exception.ResourceNotFoundException;
@@ -10,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +51,28 @@ public class TodoServiceTest {
         // WHEN / THEN
         assertThatThrownBy(() -> todoService.getTodoById(99L))
                 .isInstanceOf(ResourceNotFoundException.class);
+    }
+
+    @Test
+    void updateTodo_shouldPropagatePriority() {
+        // GIVEN
+        Todo existing = new Todo();
+        existing.setId(1L);
+        existing.setTitle("Old");
+        existing.setPriority(3);
+
+        TodoRequest request = new TodoRequest();
+        request.setTitle("New");
+        request.setPriority(1);
+
+        given(todoRepository.findById(1L)).willReturn(Optional.of(existing));
+        given(todoRepository.save(any(Todo.class))).willAnswer(inv -> inv.getArgument(0));
+
+        // WHEN
+        TodoResponse result = todoService.updateTodo(1L, request);
+
+        // THEN
+        assertThat(result.getPriority()).isEqualTo(1);
     }
 }
 

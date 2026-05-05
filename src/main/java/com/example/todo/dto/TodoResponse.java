@@ -10,16 +10,18 @@ public class TodoResponse {
     private String title;
     private String description;
     private boolean completed;
+    private Integer priority;
     private LocalDateTime createdAt;
 
     public TodoResponse() {}
 
     public TodoResponse(Long id, String title, String description,
-                        boolean completed, LocalDateTime createdAt) {
+                        boolean completed, Integer priority, LocalDateTime createdAt) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.completed = completed;
+        this.priority = priority;
         this.createdAt = createdAt;
     }
 
@@ -53,6 +55,14 @@ public class TodoResponse {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 
     public LocalDateTime getCreatedAt() {

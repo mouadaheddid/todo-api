@@ -19,6 +19,7 @@ public class TodoMapper {
         todo.setTitle(request.getTitle());
         todo.setDescription(request.getDescription());
         todo.setCompleted(request.isCompleted());
+        todo.setPriority(request.getPriority());
         // On ne set PAS id ni createdAt → gérés par JPA
         return todo;
     }
@@ -31,6 +32,7 @@ public class TodoMapper {
                 todo.getTitle(),
                 todo.getDescription(),
                 todo.isCompleted(),
+                todo.getPriority(),
                 todo.getCreatedAt()
         );
     }
