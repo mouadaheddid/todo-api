@@ -16,6 +16,9 @@ public class Todo {
     private String title;
     private String description;
     private boolean completed = false;
+    // Priorité 1 (haute) → 3 (basse). Validation côté DTO (TodoRequest).
+    @Column(nullable = false)
+    private Integer priority;
     // Date de création, remplie automatiquement avant l'insertion
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt ;
@@ -52,6 +55,10 @@ public class Todo {
         return completed;
     }
 
+    public Integer getPriority() {
+        return priority;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -70,6 +77,10 @@ public class Todo {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {

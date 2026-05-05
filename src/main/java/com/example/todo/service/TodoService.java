@@ -60,6 +60,7 @@ public class TodoService {
         existing.setTitle(request.getTitle());
         existing.setDescription(request.getDescription());
         existing.setCompleted(request.isCompleted());
+        existing.setPriority(request.getPriority());
 
         Todo updated = todoRepository.save(existing);
         return TodoMapper.toResponse(updated);

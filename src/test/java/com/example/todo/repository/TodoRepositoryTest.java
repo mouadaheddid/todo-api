@@ -19,6 +19,7 @@ class TodoRepositoryTest {
     void save_shouldPersistTodo() {
         // GIVEN
         Todo todo = new Todo("Apprendre JPA", "Test persistence");
+        todo.setPriority(2);
 
         // WHEN
         Todo saved = todoRepository.save(todo);
@@ -26,12 +27,14 @@ class TodoRepositoryTest {
         // THEN
         assertThat(saved.getId()).isNotNull();
         assertThat(saved.getTitle()).isEqualTo("Apprendre JPA");
+        assertThat(saved.getPriority()).isEqualTo(2);
     }
 
     @Test
     void findById_shoulodReturnTdo() {
         // GIVEN
         Todo todo = new Todo("Test findById", "description");
+        todo.setPriority(1);
         Todo saved = todoRepository.save(todo);
 
         // WHEN
@@ -40,6 +43,7 @@ class TodoRepositoryTest {
         // THEN
         assertThat(result).isPresent();
         assertThat(result.get().getTitle()).isEqualTo("Test findById");
+        assertThat(result.get().getPriority()).isEqualTo(1);
     }
 
     @Test
