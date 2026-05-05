@@ -117,6 +117,23 @@ public class TodoControllerTest {
 
     @Test
     @WithMockUser
+    void updateTodo_withInvalidBody_shouldReturn400WithFieldErrors() throws Exception {
+        // GIVEN — title vide viole @NotBlank sur TodoRequest (MOU-28)
+        TodoRequest request = new TodoRequest();
+        request.setTitle("");
+        request.setPriority(2);
+
+        // WHEN + THEN
+        mockMvc.perform(put("/api/todos/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors.title").exists());
+    }
+
+    @Test
+    @WithMockUser
     void updateTodo_whenNotFound_shouldReturn404() throws Exception {
         // GIVEN (MOU-29)
         TodoRequest request = new TodoRequest();
